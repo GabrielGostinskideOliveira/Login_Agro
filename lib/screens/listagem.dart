@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../model/despesa.dart';
+import 'login.dart';
 
 class DespesasList extends StatefulWidget {
   const DespesasList({Key? key}) : super(key: key);
@@ -11,64 +13,76 @@ class DespesasList extends StatefulWidget {
 }
 
 class _DespesasListState extends State<DespesasList> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Listagem de despesas'),
+        actions: [
+          TextButton.icon(
+            onPressed: () async {
+              await _auth.signOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => Login()),
+              );
+            },
+            icon: Icon(Icons.logout),
+            label: Text('Sair'),
+          ),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
-  stream: FirebaseFirestore.instance.collection('despesas').snapshots(),
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const Center(child: CircularProgressIndicator());
-    } else if (snapshot.hasError) {
-      return const Center(child: Text('Erro ao carregar os dados.'));
-    } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-      return const Center(child: Text('Nenhum dado encontrado.'));
-    }
+        stream: FirebaseFirestore.instance
+            .collection('despesas')
+            .where('userId', isEqualTo: _auth.currentUser?.uid)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          final List<DocumentSnapshot> documents = snapshot.data!.docs;
 
-    final List<DocumentSnapshot> documents = snapshot.data!.docs;
+          return ListView.builder(
+            itemCount: documents.length,
+            itemBuilder: (context, index) {
+              Despesa despesa = Despesa.fromDoc(documents[index]);
 
-    print('Número de documentos: ${documents.length}');
-
-    return ListView.builder(
-      itemCount: documents.length,
-      itemBuilder: (context, index) {
-        Despesa despesa = Despesa.fromDoc(documents[index]);
-        print('Despesa $index: $despesa');
-
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Card(
-            elevation: 3,
-            child: ListTile(
-              title: Text(despesa.nome),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(despesa.descricao),
-                  SizedBox(height: 8),
-                  Text(
-                    'Data: ${despesa.data}',
-                    style: TextStyle(fontStyle: FontStyle.italic),
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  elevation: 3,
+                  child: ListTile(
+                    title: Text(despesa.nome),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(despesa.descricao),
+                        SizedBox(height: 8),
+                        Text(
+                          'Data: ${despesa.data}',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ],
+                    ),
+                    trailing: Text(
+                      'R\$ ${despesa.valor.toString()}',
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ],
-              ),
-              trailing: Text(
-                'R\$ ${despesa.valor.toString()}',
-                style: TextStyle(
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
                 ),
-              ),
-            ),
-          ),
-        );
-      },
+              );
+            },
+          );
+        },
+      ),
     );
-  },
-),
-);
-}
+  }
 }
