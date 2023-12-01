@@ -50,20 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAaI5KAehu12oNLeUc82wHjkPWWjZLxhjg',
-    appId: '1:65847473082:web:f54c902ab590695b3ca383',
-    messagingSenderId: '65847473082',
-    projectId: 'aulamarcelo-c8e59',
-    authDomain: 'aulamarcelo-c8e59.firebaseapp.com',
-    storageBucket: 'aulamarcelo-c8e59.appspot.com',
-    measurementId: 'G-34JJ4RWL5X',
+    apiKey: 'AIzaSyBpGtAMlXW1ApdlT7tSPmBG_bBikv9lYUc',
+    appId: '1:985548510564:web:55276eae59bc5f990a1671',
+    messagingSenderId: '985548510564',
+    projectId: 'loginmarcelo-6670e',
+    authDomain: 'loginmarcelo-6670e.firebaseapp.com',
+    storageBucket: 'loginmarcelo-6670e.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBZKNcVIjxDQy_oFcbGAfDH-Y5OuSZvAY4',
-    appId: '1:65847473082:android:528fd4654cd210ed3ca383',
-    messagingSenderId: '65847473082',
-    projectId: 'aulamarcelo-c8e59',
-    storageBucket: 'aulamarcelo-c8e59.appspot.com',
+    apiKey: 'AIzaSyD7rnX1x4gOwK21443OyQ1Anpa0ESZp2KY',
+    appId: '1:985548510564:android:a248b3305b0d3b750a1671',
+    messagingSenderId: '985548510564',
+    projectId: 'loginmarcelo-6670e',
+    storageBucket: 'loginmarcelo-6670e.appspot.com',
   );
 }
